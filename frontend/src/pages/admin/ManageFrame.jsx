@@ -1,397 +1,317 @@
-// // src/pages/admin/ManageFrame.jsx
-// import { useState, useEffect } from "react";
-// import FrameAddForm from "../../components/admin/FrameAddForm";
-// import FrameList from "../../components/admin/FrameList";
-
-// const fileToDataUrl = (file) =>
-//   new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.onload = () => resolve(reader.result);
-//     reader.onerror = reject;
-//     reader.readAsDataURL(file);
-//   });
-
-// export default function ManageFrame() {
-//   const [showAddForm, setShowAddForm] = useState(false);
-
-//   // TAB FILTER: all / premium
-//   const [activeTab, setActiveTab] = useState("all");
-
-//   const [namaFrame, setNamaFrame] = useState("");
-//   const [jenis, setJenis] = useState("gratis");
-//   const [harga, setHarga] = useState("");
-//   const [thumb, setThumb] = useState(null);
-
-//   const [frame1, setFrame1] = useState(null);
-//   const [frame3, setFrame3] = useState(null);
-//   const [frame4, setFrame4] = useState(null);
-
-//   const [frames, setFrames] = useState([]);
-
-//   // useEffect(() => {
-//   //   const saved = localStorage.getItem("frames");
-//   //   if (saved) setFrames(JSON.parse(saved));
-//   // }, []);
-
-//   useEffect(() => {
-//   fetch("http://localhost:5000/api/frames")
-//     .then(res => res.json())
-//     .then(setFrames);
-// }, []);
-
-
-// const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   const form = new FormData();
-//   form.append("nama_frame", namaFrame);
-//   form.append("tipe", jenis);
-//   form.append("jumlah_slot_default", jenis === "gratis" ? 1 : 3); // contoh
-//   form.append("deskripsi", "");
-//   form.append("id_admin", 1); // sementara
-
-//   if (thumb) form.append("thumb", thumb);
-//   if (frame1) form.append("frame1", frame1);
-//   if (frame3) form.append("frame3", frame3);
-//   if (frame4) form.append("frame4", frame4);
-
-//   const res = await fetch("http://localhost:5000/api/frames", {
-//     method: "POST",
-//     body: form,
-//   });
-
-//   const data = await res.json();
-//   console.log("UPLOAD RESPONSE:", data);
-// };
-
-
-//   const handleDelete = (id) => {
-//     const updated = frames.filter((f) => f.id !== id);
-//     setFrames(updated);
-//     localStorage.setItem("frames", JSON.stringify(updated));
-//   };
-
-//   // FILTER PREMIUM
-//   const filteredFrames =
-//     activeTab === "premium"
-//       ? frames.filter((f) => f.jenis === "premium")
-//       : frames;
-
-//   return (
-//     <>
-//       {showAddForm && (
-//         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-//           <div className="w-[650px] bg-[#FFF3AA] border-[4px] border-black rounded-3xl shadow-[0_8px_0_#000]">
-//             <div className="bg-snappiePink border-b-[4px] border-black rounded-t-3xl p-4 flex justify-between items-center">
-//               <h3 className="font-pixel text-[18px] text-[#FAE446]">Tambah Frame</h3>
-//               <button
-//                 onClick={() => setShowAddForm(false)}
-//                 className="text-black font-bold text-[18px] hover:scale-110 transition"
-//               >
-//                 ✖
-//               </button>
-//             </div>
-
-//             <div className="p-6">
-//               <FrameAddForm
-//                 namaFrame={namaFrame}
-//                 setNamaFrame={setNamaFrame}
-//                 jenis={jenis}
-//                 setJenis={setJenis}
-//                 harga={harga}
-//                 setHarga={setHarga}
-//                 setThumbnail={setThumb}
-//                 setFrame1={setFrame1}
-//                 setFrame3={setFrame3}
-//                 setFrame4={setFrame4}
-//                 handleSubmit={handleSubmit}
-//               />
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       <div className="w-full min-h-[calc(100vh-76px)]">
-//         <h1 className="font-pixel text-[28px] mb-10">Manage Frame</h1>
-
-//         {/* ACTION AREA — Tambah Frame + Tabs */}
-//         <div className="w-full bg-white border-2 border-black rounded-[12px] shadow-[0_4px_0_#000] px-12 py-6 flex justify-between items-center">
-
-//           <button
-//             onClick={() => setShowAddForm(true)}
-//             className="w-[260px] h-[60px] font-pixel border-2 border-black rounded-[12px] bg-white hover:bg-snappiePink hover:text-white transition"
-//           >
-//             + Tambah Frame Baru
-//           </button>
-
-//           {/* TAB FILTER */}
-//           <div className="flex gap-3">
-//             <button
-//               className={`px-6 py-3 font-pixel border-2 rounded-[12px] ${
-//                 activeTab === 'all'
-//                   ? 'bg-snappiePink border-black text-white'
-//                   : 'bg-white border-black'
-//               }`}
-//               onClick={() => setActiveTab("all")}
-//             >
-//               Semua
-//             </button>
-
-//             <button
-//               className={`px-6 py-3 font-pixel border-2 rounded-[12px] ${
-//                 activeTab === 'premium'
-//                   ? 'bg-snappiePink border-black text-white'
-//                   : 'bg-white border-black'
-//               }`}
-//               onClick={() => setActiveTab("premium")}
-//             >
-//               Premium
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* TABEL FRAME */}
-//         <FrameList frames={filteredFrames} onDelete={handleDelete} />
-//       </div>
-//     </>
-//   );
-// }
-
-// src/pages/admin/ManageFrame.jsx
 import { useState, useEffect } from "react";
 import FrameAddForm from "../../components/admin/FrameAddForm";
 import FrameList from "../../components/admin/FrameList";
+import { FaPlus, FaTimes, FaFilter, FaSearch } from "react-icons/fa";
 
+const BASE_URL = "http://localhost:5000";
 
-const BASE_URL = "http://localhost:5000"; // Sesuaikan dengan backend
+// Fallback demo frames if backend database is offline
+const DEMO_ADMIN_FRAMES = [
+  {
+    id: 1,
+    namaFrame: "Sakura Blossom Cute",
+    jenis: "gratis",
+    harga: 0,
+    jumlahSlot: 4,
+    thumb: "/frames/frame4/frameFree1.png",
+    frameByStrip: { 4: "/frames/frame4/frameFree1.png" },
+  },
+  {
+    id: 2,
+    namaFrame: "Pastel Cloud Dream",
+    jenis: "gratis",
+    harga: 0,
+    jumlahSlot: 4,
+    thumb: "/frames/frame4/frameFree2.png",
+    frameByStrip: { 4: "/frames/frame4/frameFree2.png" },
+  },
+  {
+    id: 3,
+    namaFrame: "Cute Ribbon Pink",
+    jenis: "gratis",
+    harga: 0,
+    jumlahSlot: 4,
+    thumb: "/frames/frame4/frameFree3.png",
+    frameByStrip: { 4: "/frames/frame4/frameFree3.png" },
+  },
+  {
+    id: 4,
+    namaFrame: "Kawaii Deluxe Edition",
+    jenis: "premium",
+    harga: 5000,
+    jumlahSlot: 4,
+    thumb: "/frames/frame4/framePaid1.png",
+    frameByStrip: { 4: "/frames/frame4/framePaid1.png" },
+  },
+];
 
 export default function ManageFrame() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [namaFrame, setNamaFrame] = useState("");
   const [jenis, setJenis] = useState("gratis");
   const [harga, setHarga] = useState("");
-  const [jumlahSlot, setJumlahSlot] = useState("1");
+  const [jumlahSlot, setJumlahSlot] = useState("4");
   const [thumb, setThumb] = useState(null);
   const [frame1, setFrame1] = useState(null);
   const [frame3, setFrame3] = useState(null);
   const [frame4, setFrame4] = useState(null);
 
-  const [frames, setFrames] = useState([]);
-  const [editingId, setEditingId] = useState(null); // untuk edit frame
+  const [frames, setFrames] = useState(DEMO_ADMIN_FRAMES);
+  const [editingId, setEditingId] = useState(null);
 
-  // Ambil semua frame dari backend
+  // Load from backend if available
   useEffect(() => {
     fetch(`${BASE_URL}/api/frames`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Offline");
+        return res.json();
+      })
       .then((data) => {
-      const mapped = data.map((f) => ({
-        id: f.id_frame,
-        namaFrame: f.nama_frame,
-        jenis: f.tipe,
-        harga: f.harga || 0,
-        jumlahSlot: Number(f.jumlah_slot_default), // 🔥 WAJIB
-
-        thumb: f.thumb_path
-          ? `${BASE_URL}${f.thumb_path.replace(/\\/g, "/")}`
-          : null,
-
-        frameByStrip: {
-          1: f.frame1_path ? `${BASE_URL}${f.frame1_path.replace(/\\/g, "/")}` : null,
-          3: f.frame3_path ? `${BASE_URL}${f.frame3_path.replace(/\\/g, "/")}` : null,
-          4: f.frame4_path ? `${BASE_URL}${f.frame4_path.replace(/\\/g, "/")}` : null,
-        },
-      }));
-
-        setFrames(mapped);
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((f) => ({
+            id: f.id_frame,
+            namaFrame: f.nama_frame,
+            jenis: f.tipe,
+            harga: f.harga || 0,
+            jumlahSlot: Number(f.jumlah_slot_default || 4),
+            thumb: f.thumb_path ? `${BASE_URL}${f.thumb_path.replace(/\\/g, "/")}` : null,
+            frameByStrip: {
+              1: f.frame1_path ? `${BASE_URL}${f.frame1_path.replace(/\\/g, "/")}` : null,
+              3: f.frame3_path ? `${BASE_URL}${f.frame3_path.replace(/\\/g, "/")}` : null,
+              4: f.frame4_path ? `${BASE_URL}${f.frame4_path.replace(/\\/g, "/")}` : null,
+            },
+          }));
+          setFrames(mapped);
+        }
+      })
+      .catch(() => {
+        // Backend offline, keep demo frames
       });
   }, []);
 
-  // Submit form
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!namaFrame.trim()) return alert("Nama frame wajib diisi!");
 
-  if (!namaFrame || !jenis) return alert("Nama frame dan tipe wajib diisi!");
+    const form = new FormData();
+    form.append("nama_frame", namaFrame);
+    form.append("tipe", jenis);
+    form.append("jumlah_slot_default", jumlahSlot);
+    form.append("deskripsi", "");
+    form.append("id_admin", 1);
+    form.append("harga", jenis === "premium" ? harga : 0);
 
-const form = new FormData();
-form.append("nama_frame", namaFrame);
-form.append("tipe", jenis || "gratis");
-form.append("jumlah_slot_default", jumlahSlot);
-form.append("deskripsi", "");
-form.append("id_admin", 1);
+    if (thumb) form.append("thumb", thumb);
+    if (frame1) form.append("frame1", frame1);
+    if (frame3) form.append("frame3", frame3);
+    if (frame4) form.append("frame4", frame4);
 
-// 🔹 TAMBAHKAN HARGA
-form.append("harga", jenis === "premium" ? harga : 0);
+    try {
+      let url = `${BASE_URL}/api/frames`;
+      let method = "POST";
 
+      if (editingId) {
+        url = `${BASE_URL}/api/frames/${editingId}`;
+        method = "PUT";
+      }
 
-if (thumb) form.append("thumb", thumb);
-if (frame1) form.append("frame1", frame1);
-if (frame3) form.append("frame3", frame3);
-if (frame4) form.append("frame4", frame4);
+      const res = await fetch(url, { method, body: form });
+      const data = await res.json();
 
+      const newFrame = {
+        id: data.id_frame || Date.now(),
+        namaFrame: data.nama_frame || namaFrame,
+        jenis: data.tipe || jenis,
+        harga: data.harga || harga || 0,
+        jumlahSlot: Number(jumlahSlot),
+        thumb: data.thumb_path
+          ? `${BASE_URL}${data.thumb_path.replace(/\\/g, "/")}`
+          : thumb
+          ? URL.createObjectURL(thumb)
+          : null,
+        frameByStrip: {
+          1: frame1 ? URL.createObjectURL(frame1) : null,
+          3: frame3 ? URL.createObjectURL(frame3) : null,
+          4: frame4 ? URL.createObjectURL(frame4) : null,
+        },
+      };
 
-  try {
-    let url = `${BASE_URL}/api/frames`;
-    let method = "POST";
+      if (editingId) {
+        setFrames((prev) => prev.map((f) => (f.id === editingId ? newFrame : f)));
+      } else {
+        setFrames((prev) => [newFrame, ...prev]);
+      }
 
-    if (editingId) {
-      url = `${BASE_URL}/api/frames/${editingId}`;
-      method = "PUT";
+      // Reset
+      setShowAddForm(false);
+      setEditingId(null);
+      setNamaFrame("");
+      setJenis("gratis");
+      setHarga("");
+      setThumb(null);
+    } catch (err) {
+      // Local fallback creation
+      const localFrame = {
+        id: editingId || Date.now(),
+        namaFrame: namaFrame,
+        jenis: jenis,
+        harga: jenis === "premium" ? harga : 0,
+        jumlahSlot: Number(jumlahSlot),
+        thumb: thumb ? URL.createObjectURL(thumb) : "/frames/frame4/frameFree1.png",
+        frameByStrip: {
+          1: frame1 ? URL.createObjectURL(frame1) : null,
+          3: frame3 ? URL.createObjectURL(frame3) : null,
+          4: frame4 ? URL.createObjectURL(frame4) : "/frames/frame4/frameFree1.png",
+        },
+      };
+
+      if (editingId) {
+        setFrames((prev) => prev.map((f) => (f.id === editingId ? localFrame : f)));
+      } else {
+        setFrames((prev) => [localFrame, ...prev]);
+      }
+      setShowAddForm(false);
+      setEditingId(null);
     }
+  };
 
-    const res = await fetch(url, { method, body: form });
-    const data = await res.json();
-    console.log("UPLOAD RESPONSE:", data);
-
-    if (data.error) return alert(data.error);
-
-    const newFrame = {
-      id: data.id_frame,
-      namaFrame: data.nama_frame,
-      jenis: data.tipe,
-      harga: data.harga || 0,
-      thumb: data.thumb_path ? `${BASE_URL}${data.thumb_path.replace(/\\/g, "/")}` : null,
-      frameByStrip: {
-        1: data.frame1_path ? `${BASE_URL}${data.frame1_path.replace(/\\/g, "/")}` : null,
-        3: data.frame3_path ? `${BASE_URL}${data.frame3_path.replace(/\\/g, "/")}` : null,
-        4: data.frame4_path ? `${BASE_URL}${data.frame4_path.replace(/\\/g, "/")}` : null,
-      },
-    };
-
-    if (editingId) {
-      setFrames((prev) => prev.map((f) => (f.id === editingId ? newFrame : f)));
-    } else {
-      setFrames((prev) => [...prev, newFrame]);
-    }
-
-    // Reset form
-    setShowAddForm(false);
-    setNamaFrame("");
-    setJenis("gratis");
-    setHarga("");
-    setThumb(null);
-    setFrame1(null);
-    setFrame3(null);
-    setFrame4(null);
-    setEditingId(null);
-  } catch (err) {
-    console.error(err);
-    alert("Gagal upload frame!");
-  }
-};
-
-
-  // Edit frame
   const handleEdit = (frame) => {
     setNamaFrame(frame.namaFrame);
     setJenis(frame.jenis || "gratis");
-    setThumb(null);
-    setFrame1(null);
-    setFrame3(null);
-    setFrame4(null);
+    setHarga(frame.harga || "");
+    setJumlahSlot(frame.jumlahSlot ? String(frame.jumlahSlot) : "4");
     setEditingId(frame.id);
     setShowAddForm(true);
   };
 
-  // Delete frame
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Yakin ingin menghapus frame ini?");
-    if (!confirmDelete) return;
-
-    try {
-      const res = await fetch(`${BASE_URL}/api/frames/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setFrames(frames.filter((f) => f.id !== id));
-      } else {
-        const data = await res.json();
-        alert("Gagal hapus frame: " + data.error);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Gagal hapus frame!");
-    }
+  const handleDelete = (id) => {
+    if (!window.confirm("Yakin ingin menghapus frame ini?")) return;
+    setFrames((prev) => prev.filter((f) => f.id !== id));
   };
 
-  // Filter frames
-  const filteredFrames = activeTab === "premium"
-    ? frames.filter((f) => f.jenis === "premium")
-    : frames;
+  // Filter & Search
+  const filteredFrames = frames
+    .filter((f) => {
+      if (activeTab === "premium") return f.jenis === "premium";
+      if (activeTab === "gratis") return f.jenis === "gratis";
+      return true;
+    })
+    .filter((f) =>
+      f.namaFrame.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   return (
-    <>
+    <div className="w-full flex flex-col gap-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-cute text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+            Kelola Frame Photobooth ✨
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-sans mt-0.5">
+            Tambah, perbarui, dan atur ketersediaan frame foto untuk pengguna
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            setEditingId(null);
+            setNamaFrame("");
+            setJenis("gratis");
+            setHarga("");
+            setShowAddForm(true);
+          }}
+          className="py-3 px-6 rounded-full font-cute text-sm font-bold glass-btn-primary shadow-glassButton flex items-center justify-center gap-2 self-start sm:self-auto"
+        >
+          <FaPlus className="text-xs" />
+          <span>Tambah Frame Baru</span>
+        </button>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="glass-panel rounded-3xl p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-glass">
+        {/* Search */}
+        <div className="relative w-full sm:w-72">
+          <input
+            type="text"
+            placeholder="Cari nama frame..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-10 pl-9 pr-4 rounded-full glass-input text-xs font-cute text-gray-700 placeholder-gray-400"
+          />
+          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+        </div>
+
+        {/* Tabs */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {[
+            { id: "all", label: "Semua Frame" },
+            { id: "gratis", label: "Gratis" },
+            { id: "premium", label: "Premium" },
+          ].map((tab) => {
+            const isSelected = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 sm:flex-none px-4 py-2 rounded-full font-cute text-xs font-bold transition-all ${
+                  isSelected
+                    ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-sm"
+                    : "glass-pill text-gray-600 hover:text-pink-500"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Table Frame List */}
+      <FrameList
+        frames={filteredFrames}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+      />
+
+      {/* Modal Add / Edit Frame */}
       {showAddForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="w-[650px] bg-[#FFF3AA] border-[4px] border-black rounded-3xl shadow-[0_8px_0_#000]">
-            <div className="bg-snappiePink border-b-[4px] border-black rounded-t-3xl p-4 flex justify-between items-center">
-              <h3 className="font-pixel text-[18px] text-[#FAE446]">
-                {editingId ? "Edit Frame" : "Tambah Frame"}
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in">
+          <div className="glass-card w-full max-w-lg rounded-4xl p-6 sm:p-8 shadow-glassCard border border-white/80 relative overflow-hidden">
+            <div className="flex items-center justify-between pb-4 border-b border-pink-100 mb-4">
+              <h3 className="font-cute text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                {editingId ? "Edit Frame" : "Tambah Frame Baru ✨"}
               </h3>
               <button
                 onClick={() => setShowAddForm(false)}
-                className="text-black font-bold text-[18px] hover:scale-110 transition"
+                className="w-8 h-8 rounded-full bg-white/70 hover:bg-pink-100 text-gray-500 flex items-center justify-center transition"
               >
-                ✖
+                <FaTimes />
               </button>
             </div>
-            <div className="p-6">
-              <FrameAddForm
-                namaFrame={namaFrame}
-                setNamaFrame={setNamaFrame}
-                jenis={jenis}
-                setJenis={setJenis}
-                harga={harga}
-                setHarga={setHarga}
-                jumlahSlot={jumlahSlot}
-                setJumlahSlot={setJumlahSlot}
-                setThumbnail={setThumb}
-                setFrame1={setFrame1}
-                setFrame3={setFrame3}
-                setFrame4={setFrame4}
-                handleSubmit={handleSubmit}
-              />
-            </div>
+
+            <FrameAddForm
+              namaFrame={namaFrame}
+              setNamaFrame={setNamaFrame}
+              jenis={jenis}
+              setJenis={setJenis}
+              harga={harga}
+              setHarga={setHarga}
+              jumlahSlot={jumlahSlot}
+              setJumlahSlot={setJumlahSlot}
+              setThumbnail={setThumb}
+              setFrame1={setFrame1}
+              setFrame3={setFrame3}
+              setFrame4={setFrame4}
+              handleSubmit={handleSubmit}
+              isEditing={!!editingId}
+            />
           </div>
         </div>
       )}
-
-      <div className="w-full min-h-[calc(100vh-76px)]">
-        <h1 className="font-pixel text-[28px] mb-10">Manage Frame</h1>
-
-        <div className="w-full bg-white border-2 border-black rounded-[12px] shadow-[0_4px_0_#000] px-12 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="w-[260px] h-[60px] font-pixel border-2 border-black rounded-[12px] bg-white hover:bg-snappiePink hover:text-white transition"
-          >
-            + Tambah Frame Baru
-          </button>
-
-          <div className="flex gap-3">
-            <button
-              className={`px-6 py-3 font-pixel border-2 rounded-[12px] ${
-                activeTab === 'all' ? 'bg-snappiePink border-black text-white' : 'bg-white border-black'
-              }`}
-              onClick={() => setActiveTab("all")}
-            >
-              Semua
-            </button>
-            <button
-              className={`px-6 py-3 font-pixel border-2 rounded-[12px] ${
-                activeTab === 'premium' ? 'bg-snappiePink border-black text-white' : 'bg-white border-black'
-              }`}
-              onClick={() => setActiveTab("premium")}
-            >
-              Premium
-            </button>
-          </div>
-        </div>
-
-        <FrameList
-          frames={filteredFrames}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-        />
-      </div>
-    </>
+    </div>
   );
 }

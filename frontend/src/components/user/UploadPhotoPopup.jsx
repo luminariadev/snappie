@@ -1,66 +1,88 @@
 import { useState } from "react";
+import { FaCloudUploadAlt, FaTimes, FaImage } from "react-icons/fa";
 
 export default function UploadPhotoPopup({ isOpen, onClose, onUpload }) {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
 
-  if (!isOpen) return null; // tidak render jika popup ditutup
+  if (!isOpen) return null;
+
+  const handleFile = (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    const imageURL = URL.createObjectURL(file);
+    onUpload(imageURL);
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white w-[400px] rounded-[28px] shadow-2xl border-black overflow-hidden">
-        
-        <div className="bg-[#F4A9B8] w-full px-6 py-3 border-b-2 border-black relative flex items-center justify-center">
-        {/* CLOSE BUTTON */}
-        <button
-          className="font-press absolute top-3 right-3 text-black font-bold text-xl"
-          onClick={onClose}
-        >
-          &times;
-        </button>
-
-        <h3 
-        className="font-press text-xl text-[#FFE97F] font-bold"
-        style={{
-            textShadow: "2px 4px 5px #000, -2px -2px 0px rgba(0,0,0,0.5)",
-        }}
-        >
-            SNAPPIE</h3>
-        </div>
-        
-        <div className="w-full h-60 rounded-xl flex flex-col items-center justify-center overflow-hidden">
-            <h3 className="font-press text-xl text-center text-black font bold">
-                Want to upload photos?
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+      <div className="glass-card w-full max-w-md rounded-4xl p-6 sm:p-8 shadow-glassCard border border-white/80 relative overflow-hidden">
+        {/* Top Bar with Cute Close Button */}
+        <div className="flex items-center justify-between pb-4 border-b border-pink-100">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">📸</span>
+            <h3 className="font-cute text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              Upload Foto Kamu
             </h3>
-
-            {/* File Upload Input */}
-            <label 
-            className="font-press text-xl bg-[#F3D7A5] items-center justify-center py-2 px-3 rounded-xl text-center text-[#FFE97F] font-bold border border-black cursor-pointer transition mt-8"
-            style={{
-                WebkitTextStroke: "0.5px black"
-            }}
-            >
-                SELECT IMAGES
-                <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={e => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    const imageURL =URL.createObjectURL(file);
-                    onUpload(imageURL);
-                    onClose();
-                }}
-                />
-            </label>
-
-            <h5 className="font-press text-xs text-center text-black font bold px-9 mt-7">
-                Create fun photo strips with any image you like!
-            </h5>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/70 hover:bg-pink-100 text-gray-500 hover:text-pink-600 flex items-center justify-center transition"
+          >
+            <FaTimes />
+          </button>
         </div>
-        
 
+        {/* Drag and Drop Box */}
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragActive(true);
+          }}
+          onDragLeave={() => setDragActive(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragActive(false);
+            if (e.dataTransfer.files?.[0]) {
+              handleFile(e.dataTransfer.files[0]);
+            }
+          }}
+          className={`mt-6 border-2 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center transition-all ${
+            dragActive
+              ? "border-pink-500 bg-pink-100/50 scale-[1.02]"
+              : "border-pink-300/70 bg-white/40 hover:bg-white/60"
+          }`}
+        >
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-pink-200 to-purple-200 text-pink-600 flex items-center justify-center text-3xl shadow-sm mb-4">
+            <FaCloudUploadAlt />
+          </div>
+
+          <p className="font-cute text-base font-bold text-gray-700">
+            Tarik & Jatuhkan Foto di Sini
+          </p>
+          <p className="text-xs text-gray-500 font-sans mt-1 mb-5">
+            Mendukung file JPG, PNG, atau WEBP
+          </p>
+
+          <label className="cursor-pointer">
+            <span className="py-2.5 px-6 rounded-full font-cute text-sm font-bold glass-btn-primary shadow-glassButton inline-flex items-center gap-2">
+              <FaImage /> Pilih dari Galeri
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFile(file);
+              }}
+            />
+          </label>
         </div>
+
+        <p className="text-center text-xs text-gray-400 font-cute mt-4">
+          ✨ Foto akan langsung dimasukkan ke frame photobooth!
+        </p>
       </div>
+    </div>
   );
 }

@@ -1,20 +1,42 @@
-# Node
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Testing & Logs
+coverage/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Env
+# Environment Variables & Secrets
 .env
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
 
-# Build
+# Production Builds
 dist/
 build/
+out/
 
-# Upload & Runtime files
+# Dynamic Media Uploads
 uploads/
-frame snappie/
+backend/uploads/
+frontend/public/uploads/
 
-# OS
+# OS and Editor Artifacts
 .DS_Store
 Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

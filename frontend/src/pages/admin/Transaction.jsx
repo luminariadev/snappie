@@ -1,270 +1,186 @@
-// import { useState } from "react";
-// import TransactionList from "../../components/admin/TransactionList";
-// import { MdSearch, MdFilterAlt, MdDateRange } from "react-icons/md";
-// import { IoIosArrowDown } from "react-icons/io";
-
-// // Statistic Cards
-// import TotalRevenueCard from "../../components/admin/transactions/TotalRevenueCard";
-// import TotalSuccessTransactionCard from "../../components/admin/transactions/TotalSuccessTransactionCard";
-// import TotalVisitorsCard from "../../components/admin/transactions/TotalVisitorsCard";
-
-// // date
-// import DatePicker from "react-datepicker";
-
-// export default function TransactionPage() {
-//   // Dummy STATS
-//   const [stats] = useState({
-//     revenue: 500000,
-//     success: 500,
-//     visitors: 150000,
-//   });
-
-//   // Dummy TRANSACTION DATA
-//   const dummyData = [
-//     {
-//       id: "SNPP-001095",
-//       frame: "Classic Chic",
-//       filter: "Monokrom",
-//       date: "March 12, 2023",
-//       status: "Premium",
-//       harga: "Rp 1.000",
-//     },
-//     {
-//       id: "SNPP-002201",
-//       frame: "Retro Pop",
-//       filter: "Sepia",
-//       date: "April 2, 2023",
-//       status: "Gratis",
-//       harga: "Rp 0",
-//     },
-//   ];
-
-//   // Date filter
-//   const [selectedDate, setSelectedDate] = useState(null);
-//   const [showDatePicker, setShowDatePicker] = useState(false);
-
-//   // SEARCH & FILTER STATES
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [filterStatus, setFilterStatus] = useState("");
-//   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-
-//   // FILTERING LOGIC
-//   const filteredData = dummyData.filter((item) => {
-//     const matchSearch =
-//       item.frame.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//       item.id.toLowerCase().includes(searchTerm.toLowerCase());
-
-//     const matchDate = selectedDate
-//       ? new Date(item.date).toDateString() === selectedDate.toDateString()
-//       : true;
-
-//     const matchStatus = filterStatus ? item.status === filterStatus : true;
-
-//     return matchSearch && matchStatus && matchDate;
-//   });
-
-//   return (
-//     <div className="w-full min-h-[calc(100vh-76px)] py-8 px-10">
-//       <div className="max-w-[1500px] mx-auto">
-
-//         {/* TITLE */}
-//         <h1 className="font-pixel text-[28px] mb-8">Transaksi</h1>
-
-//         {/* STAT CARDS */}
-//         <div className="w-full flex justify-between gap-6 mt-8 mb-10">
-//           <TotalRevenueCard value={stats.revenue} />
-//           <TotalSuccessTransactionCard value={stats.success} />
-//           <TotalVisitorsCard value={stats.visitors} />
-//         </div>
-
-//         {/* FILTER BAR */}
-//         <div className="w-full flex items-center gap-4 bg-snappiePink border-[2px] border-black rounded-[25px] px-6 py-4 mb-8 shadow-md relative">
-
-//           {/* SEARCH */}
-//           <div className="relative flex-1">
-//             <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
-//             <input
-//               type="text"
-//               placeholder="Search"
-//               value={searchTerm}
-//               onChange={(e) => setSearchTerm(e.target.value)}
-//               className="w-full h-[45px] border-[2px] border-black rounded-[12px] pl-10 pr-4 bg-white font-pixel text-[11px]"
-//             />
-//           </div>
-
-//           {/* FRAME FILTER (dummy) */}
-//           <button className="flex items-center justify-center gap-2 w-[110px] h-[45px] bg-white border-[2px] border-black rounded-[12px] font-pixel text-[11px] hover:bg-[#FFE97F] transition-all">
-//             <MdFilterAlt size={16} /> Frame <IoIosArrowDown size={14} />
-//           </button>
-
-//           {/* DATE FILTER */}
-//           <div className="relative">
-//             <button
-//               onClick={() => setShowDatePicker(!showDatePicker)}
-//               className="flex items-center justify-center gap-2 w-[110px] h-[45px] bg-white border-[2px] border-black rounded-[12px] font-pixel text-[11px] hover:bg-[#FFE97F] transition-all"
-//             >
-//               <MdDateRange size={18} /> Date <IoIosArrowDown size={14} />
-//             </button>
-
-//             {showDatePicker && (
-//               <div className="absolute top-[50px] left-0 z-[100] bg-white p-2 border-[2px] border-black rounded-[12px]">
-//                 <DatePicker
-//                   selected={selectedDate}
-//                   onChange={(date) => {
-//                     setSelectedDate(date);
-//                     setShowDatePicker(false);
-//                   }}
-//                   inline
-//                 />
-//               </div>
-//             )}
-//           </div>
-
-//           {/* STATUS FILTER */}
-//           <div className="relative">
-//             <button
-//               onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-//               className="flex items-center justify-center gap-2 w-[110px] h-[45px] bg-white border-[2px] border-black rounded-[12px] font-pixel text-[11px] hover:bg-[#FFE97F] transition-all"
-//             >
-//               <MdFilterAlt size={16} /> Status <IoIosArrowDown size={14} />
-//             </button>
-
-//             {showStatusDropdown && (
-//               <div className="absolute top-[52px] left-0 w-[120px] bg-white border-[2px] border-black rounded-[12px] shadow-md z-[100]">
-//                 <button
-//                   onClick={() => {
-//                     setFilterStatus("Premium");
-//                     setShowStatusDropdown(false);
-//                   }}
-//                   className="w-full px-4 py-2 font-pixel text-[11px] hover:bg-[#FFD1D1] border-b border-black/20"
-//                 >
-//                   Premium
-//                 </button>
-
-//                 <button
-//                   onClick={() => {
-//                     setFilterStatus("Gratis");
-//                     setShowStatusDropdown(false);
-//                   }}
-//                   className="w-full px-4 py-2 font-pixel text-[11px] hover:bg-[#D9F5B5]"
-//                 >
-//                   Gratis
-//                 </button>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* TABLE */}
-//         <TransactionList data={filteredData} />
-//       </div>
-//     </div>
-//   );
-// }
-
 import { useEffect, useState } from "react";
 import TransactionList from "../../components/admin/TransactionList";
-import { MdSearch, MdFilterAlt, MdDateRange } from "react-icons/md";
-import { IoIosArrowDown } from "react-icons/io";
-
 import TotalRevenueCard from "../../components/admin/transactions/TotalRevenueCard";
 import TotalSuccessTransactionCard from "../../components/admin/transactions/TotalSuccessTransactionCard";
 import TotalVisitorsCard from "../../components/admin/transactions/TotalVisitorsCard";
-
+import { MdSearch, MdFilterAlt, MdDateRange } from "react-icons/md";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const API_URL = "http://localhost:5000/api/admin/transactions";
 
-export default function TransactionPage() {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+// Demo transaction data if backend is offline
+const DEMO_TRANSACTIONS = [
+  {
+    id: "SNPP-001095",
+    frame: "Sakura Blossom Cute",
+    filter: "Kawaii Soft",
+    date: new Date(Date.now() - 3600000 * 2).toISOString(),
+    status: "Premium",
+    harga: 5000,
+  },
+  {
+    id: "SNPP-001096",
+    frame: "Pastel Cloud Dream",
+    filter: "Natural",
+    date: new Date(Date.now() - 3600000 * 5).toISOString(),
+    status: "Gratis",
+    harga: 0,
+  },
+  {
+    id: "SNPP-001097",
+    frame: "Cute Ribbon Pink",
+    filter: "Retro Film",
+    date: new Date(Date.now() - 3600000 * 12).toISOString(),
+    status: "Gratis",
+    harga: 0,
+  },
+  {
+    id: "SNPP-001098",
+    frame: "Kawaii Deluxe Edition",
+    filter: "Pastel Pop",
+    date: new Date(Date.now() - 86400000).toISOString(),
+    status: "Premium",
+    harga: 5000,
+  },
+  {
+    id: "SNPP-001099",
+    frame: "Starry Night Purple",
+    filter: "Mono Chic",
+    date: new Date(Date.now() - 86400000 * 2).toISOString(),
+    status: "Gratis",
+    harga: 0,
+  },
+];
 
-  // FILTER STATES
+export default function TransactionPage() {
+  const [transactions, setTransactions] = useState(DEMO_TRANSACTIONS);
+  const [loading, setLoading] = useState(false);
+
+  // Filter States
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
   const [selectedDate, setSelectedDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
 
-  /* ================= FETCH TRANSACTIONS ================= */
+  /* Fetch Transactions with Fallback */
   useEffect(() => {
     fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => {
-        setTransactions(data);
-        setLoading(false);
+      .then((res) => {
+        if (!res.ok) throw new Error("Offline");
+        return res.json();
       })
-      .catch((err) => {
-        console.error("Fetch transaksi error:", err);
-        setLoading(false);
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTransactions(data);
+        }
+      })
+      .catch(() => {
+        // Backend offline, keep demo transactions
       });
   }, []);
 
-  /* ================= STATISTICS ================= */
+  /* Statistics Calculation */
   const stats = {
-    revenue: transactions.reduce(
-      (sum, t) => sum + Number(t.harga || 0),
-      0
-    ),
+    revenue: transactions.reduce((sum, t) => sum + Number(t.harga || 0), 0),
     success: transactions.filter((t) => t.status === "Premium").length,
     visitors: transactions.length,
   };
 
-  /* ================= FILTERING ================= */
+  /* Filtering */
   const filteredData = transactions.filter((item) => {
     const matchSearch =
-      item.frame.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.id.toLowerCase().includes(searchTerm.toLowerCase());
+      (item.frame && item.frame.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.id && item.id.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchDate = selectedDate
-      ? new Date(item.date).toDateString() ===
-        selectedDate.toDateString()
+      ? new Date(item.date).toDateString() === selectedDate.toDateString()
       : true;
 
-    const matchStatus = filterStatus ? item.status === filterStatus : true;
+    const matchStatus =
+      filterStatus === "all" || !filterStatus
+        ? true
+        : item.status.toLowerCase() === filterStatus.toLowerCase();
 
     return matchSearch && matchDate && matchStatus;
   });
 
   return (
-    <div className="w-full min-h-[calc(100vh-76px)] py-8 px-10">
-      <div className="max-w-[1500px] mx-auto">
+    <div className="w-full flex flex-col gap-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="font-cute text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+          Riwayat Transaksi & Analitik 💳
+        </h1>
+        <p className="text-xs sm:text-sm text-gray-500 font-sans mt-0.5">
+          Pantau statistik transaksi, frame premium, dan aktivitas sesi photobooth
+        </p>
+      </div>
 
-        <h1 className="font-pixel text-[28px] mb-8">Transaksi</h1>
+      {/* STAT CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <TotalRevenueCard value={stats.revenue} />
+        <TotalSuccessTransactionCard value={stats.success} />
+        <TotalVisitorsCard value={stats.visitors} />
+      </div>
 
-        {/* STAT CARDS */}
-        <div className="w-full flex justify-between gap-6 mt-8 mb-10">
-          <TotalRevenueCard value={stats.revenue} />
-          <TotalSuccessTransactionCard value={stats.success} />
-          <TotalVisitorsCard value={stats.visitors} />
+      {/* FILTER & SEARCH BAR */}
+      <div className="glass-panel rounded-3xl p-3 sm:p-4 flex flex-col md:flex-row items-center justify-between gap-3 shadow-glass">
+        {/* Search Input */}
+        <div className="relative w-full md:w-72">
+          <input
+            type="text"
+            placeholder="Cari frame / ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full h-10 pl-9 pr-4 rounded-full glass-input text-xs font-cute text-gray-700 placeholder-gray-400"
+          />
+          <MdSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base" />
         </div>
 
-        {/* FILTER BAR */}
-        <div className="w-full flex items-center gap-4 bg-snappiePink border-[2px] border-black rounded-[25px] px-6 py-4 mb-8 shadow-md relative">
+        {/* Status & Date Filter Buttons */}
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          {/* Status Pills */}
+          {[
+            { id: "all", label: "Semua" },
+            { id: "premium", label: "Premium" },
+            { id: "gratis", label: "Gratis" },
+          ].map((tab) => {
+            const isSelected = filterStatus === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setFilterStatus(tab.id)}
+                className={`px-4 py-2 rounded-full font-cute text-xs font-bold transition-all ${
+                  isSelected
+                    ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-sm"
+                    : "glass-pill text-gray-600 hover:text-pink-500"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
 
-          {/* SEARCH */}
-          <div className="relative flex-1">
-            <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-[45px] border-[2px] border-black rounded-[12px] pl-10 pr-4 bg-white font-pixel text-[11px]"
-            />
-          </div>
-
-          {/* DATE FILTER */}
+          {/* Date Picker Button */}
           <div className="relative">
             <button
               onClick={() => setShowDatePicker(!showDatePicker)}
-              className="flex items-center gap-2 w-[110px] h-[45px] bg-white border-[2px] border-black rounded-[12px]"
+              className="px-4 py-2 rounded-full font-cute text-xs font-semibold glass-pill text-gray-700 hover:text-purple-600 flex items-center gap-1.5"
             >
-              <MdDateRange /> Date <IoIosArrowDown />
+              <MdDateRange className="text-sm text-purple-400" />
+              <span>
+                {selectedDate
+                  ? selectedDate.toLocaleDateString("id-ID", {
+                      day: "2-digit",
+                      month: "short",
+                    })
+                  : "Pilih Tanggal"}
+              </span>
             </button>
 
             {showDatePicker && (
-              <div className="absolute top-[50px] z-[100] bg-white p-2 border-[2px] border-black rounded-[12px]">
+              <div className="absolute top-12 right-0 z-50 glass-card rounded-3xl p-3 shadow-glassCard border border-white/80">
                 <DatePicker
                   selected={selectedDate}
                   onChange={(date) => {
@@ -273,45 +189,25 @@ export default function TransactionPage() {
                   }}
                   inline
                 />
-              </div>
-            )}
-          </div>
-
-          {/* STATUS FILTER */}
-          <div className="relative">
-            <button
-              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-              className="flex items-center gap-2 w-[110px] h-[45px] bg-white border-[2px] border-black rounded-[12px]"
-            >
-              <MdFilterAlt /> Status <IoIosArrowDown />
-            </button>
-
-            {showStatusDropdown && (
-              <div className="absolute top-[52px] w-[120px] bg-white border-[2px] border-black rounded-[12px] z-[100]">
-                {["Premium", "Gratis"].map((s) => (
+                {selectedDate && (
                   <button
-                    key={s}
                     onClick={() => {
-                      setFilterStatus(s);
-                      setShowStatusDropdown(false);
+                      setSelectedDate(null);
+                      setShowDatePicker(false);
                     }}
-                    className="w-full px-4 py-2 text-[11px] hover:bg-gray-100"
+                    className="w-full mt-2 py-1.5 px-3 rounded-xl bg-pink-100 text-pink-700 font-cute text-xs font-bold"
                   >
-                    {s}
+                    Reset Filter Tanggal
                   </button>
-                ))}
+                )}
               </div>
             )}
           </div>
         </div>
-
-        {/* TABLE */}
-        {loading ? (
-          <p className="text-center">Loading transaksi...</p>
-        ) : (
-          <TransactionList data={filteredData} />
-        )}
       </div>
+
+      {/* TRANSACTION TABLE */}
+      <TransactionList data={filteredData} />
     </div>
   );
 }

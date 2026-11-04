@@ -1,20 +1,24 @@
-export default function TotalRevenueCard({ value }) {
+import { FaCoins } from "react-icons/fa";
+
+export default function TotalRevenueCard({ value = 0 }) {
   return (
-    <div className="elative overflow-hidden
-      w-full md:w-1/3
-      bg-gradient-to-br from-[#FFFFFF] to-[#FFD5D5]
-      border-[2px] border-black/20
-      rounded-[32px]
-      shadow-[0_10px_25px_rgba(0,0,0,0.18)]
-      py-6 px-8
-      backdrop-blur-sm
-      flex flex-col items-center text-center
-      hover:scale-[1.02] transition-all duration-200"
-    >
-      <p className="text-[18px] font-semibold text-[#555]">Total Pendapatan</p>
-      <p className="text-[36px] mt-2 font-bold text-[#C54646] tracking-wide">
-        Rp {value.toLocaleString("id-ID")}
-      </p>
+    <div className="flex-1 glass-card rounded-4xl p-5 sm:p-6 shadow-glassCard border border-white/80 relative overflow-hidden group hover:scale-[1.02] transition-all">
+      <div className="flex items-center justify-between">
+        <span className="font-cute text-xs sm:text-sm font-bold text-gray-500">
+          Total Pendapatan
+        </span>
+        <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-500 flex items-center justify-center text-lg shadow-sm">
+          <FaCoins />
+        </div>
+      </div>
+      <div className="mt-3">
+        <span className="font-cute text-2xl sm:text-3xl font-extrabold text-rose-600 block">
+          Rp {Number(value || 0).toLocaleString("id-ID")}
+        </span>
+        <span className="text-[11px] font-sans text-rose-400 font-semibold mt-1 block">
+          +100% dari frame premium
+        </span>
+      </div>
     </div>
   );
 }

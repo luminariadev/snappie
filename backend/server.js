@@ -18,20 +18,25 @@ app.use(express.json());
 
 // Routes
 import frameRoutes from "./src/routes/frameRoutes.js";
-import uploadRoutes from "./src/routes/uploadRoutes.js";
 import paymentRoutes from "./src/routes/paymentRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
 import fotoRoutes from "./src/routes/fotoRoutes.js";
 import subFotoRoutes from "./src/routes/subFotoRoutes.js";
 import transaksiRoutes from "./src/routes/transaksiRoutes.js";
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
+});
+
 // Register Routes
 app.use("/api/frames", frameRoutes);
-// app.use("/api/upload", uploadRoutes);
-app.use("/api/payment", paymentRoutes); // include callback inside
+app.use("/api/payment", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/foto", fotoRoutes);
 app.use("/api/subfoto", subFotoRoutes);
+app.use("/api/admin/transactions", transaksiRoutes);
+
 app.use(
   '/uploads',
   express.static('uploads', {
@@ -43,25 +48,19 @@ app.use(
     }
   })
 );
-app.use("/api/admin/transactions", transaksiRoutes);
 
-
-
-
-// Test DB
+// Database connection & sync
 try {
   await sequelize.authenticate();
-  console.log("✅ PostgreSQL Connected!");
+  console.log("✅ PostgreSQL Connected successfully!");
+  await sequelize.sync();
+  console.log("📦 Database schema synchronized");
 } catch (err) {
-  console.error("❌ Database connection failed:", err);
+  console.warn("⚠️  Database connection failed. Ensure PostgreSQL is active:", err.message);
 }
-
-// Sync models (only for development)
-await sequelize.sync();
-console.log("📦 Database synced");
 
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Snappie API Server running on port ${PORT}`);
 });

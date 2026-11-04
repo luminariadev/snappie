@@ -1,146 +1,93 @@
-// import { MdEdit, MdDelete } from "react-icons/md";
-
-// export default function TransactionList({ data = [] }) {
-//   return (
-//     <div
-//       className="
-//         w-full
-//       bg-white
-//         border-[2px] border-black
-//         rounded-[15px]
-//         shadow-[drop-shadow-[0_4px_6px_rgba(0,0,0,0.25)]
-//         mt-0
-//         overflow-x-auto
-//         text-[#4B5563]
-//       "
-//     >
-//       <table className="w-full text-[14px]">
-//         <thead>
-//           <tr className="bg-snappiePink text-black border-b-[2px] border-black h-[58px]">
-//             <th className="px-6 text-left">Transaksi ID</th>
-//             <th className="px-6 text-left">Frame</th>
-//             <th className="px-6 text-left">Filter</th>
-//             <th className="px-6 text-left">Tanggal Unduhan</th>
-//             <th className="px-6 text-center">Status</th>
-//             <th className="px-6 text-right">Harga</th>
-//             <th className="px-6 text-center">Aksi</th>
-//           </tr>
-//         </thead>
-
-//         <tbody>
-//           {data.map((item, index) => (
-//             <tr
-//               key={index}
-//               className="border-b border-gray-200 h-[52px] hover:bg-gray-100 transition"
-//             >
-//               <td className="px-6">{item.id}</td>
-//               <td className="px-6">{item.frame}</td>
-//               <td className="px-6">{item.filter}</td>
-//               <td className="px-6">{item.date}</td>
-
-//               {/* STATUS BADGE */}
-//               <td className="text-center">
-//                 <span
-//                   className={`
-//                   px-3 py-[4px] text-[11px] rounded-full font-medium
-//                   ${
-//                     item.status === "Gratis"
-//                       ? "bg-[#BBDA97] text-black"
-//                       : "bg-[#F9ADB0] text-black"
-//                   }
-//                 `}
-//                 >
-//                   {item.status}
-//                 </span>
-//               </td>
-
-//               <td className="px-6 text-right">{item.harga}</td>
-
-//               {/* ACTION BUTTON */}
-//               <td className="px-6 text-center flex gap-3 justify-center">
-//                 <MdEdit
-//                   size={18}
-//                   className="cursor-pointer hover:text-black"
-//                   onClick={() => console.log("Edit:", item.id)}
-//                 />
-//                 <MdDelete
-//                   size={18}
-//                   className="cursor-pointer hover:text-red-500"
-//                   onClick={() => console.log("Hapus:", item.id)}
-//                 />
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-
 import { MdEdit, MdDelete } from "react-icons/md";
+import { FaLock, FaCheck } from "react-icons/fa";
 
 export default function TransactionList({ data = [] }) {
-  const formatDate = (date) =>
-    new Date(date).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+  const formatDate = (date) => {
+    try {
+      return new Date(date).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return String(date);
+    }
+  };
 
   const formatRupiah = (value) =>
     new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
-    }).format(value);
+      maximumFractionDigits: 0,
+    }).format(Number(value || 0));
+
+  if (!data.length) {
+    return (
+      <div className="w-full glass-card rounded-4xl p-8 text-center text-gray-500 font-cute mt-6">
+        <span className="text-3xl block mb-2">💳</span>
+        Belum ada riwayat transaksi yang cocok dengan filter.
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full bg-white border-[2px] border-black rounded-[15px] shadow-md overflow-x-auto">
-      <table className="w-full text-[14px]">
-        <thead>
-          <tr className="bg-snappiePink border-b-[2px] border-black h-[58px]">
-            <th className="px-6 text-left">Transaksi ID</th>
-            <th className="px-6 text-left">Frame</th>
-            <th className="px-6 text-left">Filter</th>
-            <th className="px-6 text-left">Tanggal Unduhan</th>
-            <th className="px-6 text-center">Status</th>
-            <th className="px-6 text-right">Harga</th>
-            <th className="px-6 text-center">Aksi</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index} className="border-b h-[52px] hover:bg-gray-100">
-              <td className="px-6">{item.id}</td>
-              <td className="px-6">{item.frame}</td>
-              <td className="px-6">{item.filter}</td>
-              <td className="px-6">{formatDate(item.date)}</td>
-
-              <td className="text-center">
-                <span
-                  className={`px-3 py-1 rounded-full text-[11px]
-                    ${
-                      item.status === "Gratis"
-                        ? "bg-[#BBDA97]"
-                        : "bg-[#F9ADB0]"
-                    }`}
-                >
-                  {item.status}
-                </span>
-              </td>
-
-              <td className="px-6 text-right">
-                {formatRupiah(item.harga)}
-              </td>
-
-              <td className="px-6 flex gap-3 justify-center">
-                <MdEdit className="cursor-pointer" />
-                <MdDelete className="cursor-pointer text-red-500" />
-              </td>
+    <div className="mt-6 w-full glass-card rounded-4xl p-2 sm:p-4 shadow-glassCard border border-white/80 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm font-sans border-collapse">
+          <thead>
+            <tr className="border-b border-pink-100 text-xs font-cute text-gray-500">
+              <th className="px-4 py-3">ID Transaksi</th>
+              <th className="px-4 py-3">Frame</th>
+              <th className="px-4 py-3">Filter</th>
+              <th className="px-4 py-3">Tanggal</th>
+              <th className="px-4 py-3 text-center">Status</th>
+              <th className="px-4 py-3 text-right">Harga</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-pink-100/60">
+            {data.map((item, index) => (
+              <tr key={index} className="hover:bg-white/40 transition">
+                <td className="px-4 py-3 font-mono text-xs text-gray-600 font-semibold">
+                  {item.id}
+                </td>
+                <td className="px-4 py-3 font-cute font-bold text-gray-800">
+                  {item.frame}
+                </td>
+                <td className="px-4 py-3 text-xs text-gray-500">
+                  {item.filter || "Normal"}
+                </td>
+                <td className="px-4 py-3 text-xs text-gray-500">
+                  {formatDate(item.date)}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full font-cute text-xs font-bold ${
+                      item.status === "Premium"
+                        ? "bg-purple-100 text-purple-700 border border-purple-200"
+                        : "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                    }`}
+                  >
+                    {item.status === "Premium" ? (
+                      <>
+                        <FaLock className="text-[10px]" />
+                        <span>Premium</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaCheck className="text-[10px]" />
+                        <span>Gratis</span>
+                      </>
+                    )}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-right font-cute font-bold text-gray-800">
+                  {formatRupiah(item.harga)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
